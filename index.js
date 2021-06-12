@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const bot = new Discord.Client();
-const TOKEN = 'NTU5MjEzMjMzNDA0Mzc5MTU2.XJb16A.ESBTTxlJe7tTIrxQn1z0YW8-73I';
+const TOKEN = 'NTU5MjEzMjMzNDA0Mzc5MTU2.XJb16A.bdsi3gJZ24jCr8iJOjTa3xOcP7A';
 const commandController = require('./src/Controller/Command').commandController;
 
 bot.login(TOKEN);
