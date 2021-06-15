@@ -39,7 +39,11 @@ bot.on('message', message => {
 
             break;
         case 'list':
-            const folder = message.content.substr(message.content.indexOf(" ") + 1);
+            let folder = '';
+
+            if (args[1]) {
+                folder = message.content.substr(message.content.indexOf(" ") + 1);
+            }
 
             route({
                 command: cmd,
