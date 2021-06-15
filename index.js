@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const bot = new Discord.Client();
 const TOKEN = 'NTU5MjEzMjMzNDA0Mzc5MTU2.XJb16A.bdsi3gJZ24jCr8iJOjTa3xOcP7A';
-const commandController = require('./src/Controller/Command').commandController;
+const route = require('./src/Route/Main.Route').route;
 
 bot.login(TOKEN);
 
@@ -29,13 +29,23 @@ bot.on('message', message => {
     {
         case 'download':
             if (args[1] && args[2])  {
-                commandController({
+                route({
+                    command: cmd,
                     message: message,
                     type: args[1],
                     url: args[2]
                 });
             }
 
+            break;
+        case 'list':
+            const folder = message.content.substr(message.content.indexOf(" ") + 1);
+
+            route({
+                command: cmd,
+                message: message,
+                folder: folder ? folder : ''
+            });
             break;
         default:
             message.channel.send('Command not found');
