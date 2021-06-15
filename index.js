@@ -27,6 +27,19 @@ bot.on('message', message => {
 
     switch (cmd)
     {
+        case 'tes':
+            const idAuthor = message.author.id;
+            const nickName = message.guild.members.cache.get(idAuthor).nickname;
+            const userName = nickName ? nickName : message.author.username
+
+            let messageReply = "'Paan?!";
+
+            if (userName === 'Zankenzu') {
+                messageReply = 'Apa sayang?';
+            }
+
+            message.channel.send(messageReply);
+            break;
         case 'download':
             if (args[1] && args[2])  {
                 route({
