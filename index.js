@@ -1,6 +1,7 @@
+require('dotenv').config();
 const Discord = require('discord.js');
 const bot = new Discord.Client();
-const TOKEN = 'NTU5MjEzMjMzNDA0Mzc5MTU2.XJb16A.bdsi3gJZ24jCr8iJOjTa3xOcP7A';
+const TOKEN = process.env.TOKEN;
 const route = require('./src/Route/Main.Route').route;
 
 bot.login(TOKEN);
