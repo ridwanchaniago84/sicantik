@@ -1,4 +1,5 @@
 const axios = require('axios');
+const saveError = require('../Error/Error').saveError;
 
 const download = (parameter) => {
     switch (parameter.type) {
@@ -11,6 +12,7 @@ const download = (parameter) => {
                 })
                 .catch((error) => {
                     parameter.message.channel.send('Shippai');
+                    saveError(error);
                 });
 
             parameter.message.channel.send('Check your file ini here: https://ztorrentdowloader.herokuapp.com/file');

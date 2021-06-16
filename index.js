@@ -3,6 +3,7 @@ const Discord = require('discord.js');
 const bot = new Discord.Client();
 const TOKEN = process.env.TOKEN;
 const route = require('./src/Route/Main.Route').route;
+const errorMessage = require('./src/Controller/Error').errorMessage;
 
 bot.login(TOKEN);
 
@@ -28,6 +29,16 @@ bot.on('message', message => {
 
     switch (cmd)
     {
+        case 'kok':
+            if (args[1])  {
+                errorMessage({
+                    command: cmd,
+                    message: message,
+                    parameter: args[1]
+                });
+            }
+
+            break;
         case 'tes':
             const idAuthor = message.author.id;
             const nickName = message.guild.members.cache.get(idAuthor).nickname;
