@@ -3,10 +3,9 @@ const Discord = require('discord.js');
 const bot = new Discord.Client();
 const TOKEN = process.env.TOKEN;
 const route = require('./src/Route/Main.Route').route;
-const errorMessage = require('./src/Controller/Error').errorMessage;
+const ResponseAI = require('./src/Controller/ResponseAI').ResponseAI;
 
 bot.login(TOKEN);
-
 const prefix = 'ア';
 
 bot.on('ready', () => {
@@ -21,42 +20,46 @@ bot.on('ready', () => {
     });
 });
 
-bot.on('message', message => {
-    if (!message.content.startsWith(prefix)) return;
+bot.on('message', messages => {
+    const AIName = [
+        'tenshi', 'Tenshi'
+    ];
 
-    const args = message.content.trim().split(/ +/g);
+    if (AIName.includes(messages.content))
+        return messages.channel.send('Apa?');
+
+    const splitTextVoice = messages.content.split(' ');
+    let founded = false;
+    
+    splitTextVoice.map((message) => {
+        let callingAI = AIName.find(name =>
+            name === message
+        );
+
+        if (callingAI && !founded) {
+            founded = true;
+            ResponseAI({
+                message: messages,
+                content: messages.content
+            });
+
+            return;
+        }
+    });
+
+    // Function Parameter
+
+    if (!messages.content.startsWith(prefix)) return;
+
+    const args = messages.content.trim().split(/ +/g);
     const cmd = args[0].slice(prefix.length).toLowerCase();
 
-    switch (cmd)
-    {
-        case 'kok':
-            if (args[1])  {
-                errorMessage({
-                    command: cmd,
-                    message: message,
-                    parameter: args[1]
-                });
-            }
-
-            break;
-        case 'tes':
-            const idAuthor = message.author.id;
-            const nickName = message.guild.members.cache.get(idAuthor).nickname;
-            const userName = nickName ? nickName : message.author.username
-
-            let messageReply = "'Paan?!";
-
-            if (userName === 'Zankenzu') {
-                messageReply = 'Apa sayang?';
-            }
-
-            message.channel.send(messageReply);
-            break;
+    switch (cmd) {
         case 'download':
-            if (args[1] && args[2])  {
+            if (args[1] && args[2]) {
                 route({
                     command: cmd,
-                    message: message,
+                    message: messages,
                     type: args[1],
                     url: args[2]
                 });
@@ -67,16 +70,16 @@ bot.on('message', message => {
             let folder = '';
 
             if (args[1]) {
-                folder = message.content.substr(message.content.indexOf(" ") + 1);
+                folder = messages.content.substr(messages.content.indexOf(" ") + 1);
             }
 
             route({
                 command: cmd,
-                message: message,
+                message: messages,
                 folder: folder ? folder : ''
             });
             break;
         default:
-            message.channel.send('Command not found');
+            messages.channel.send('Command not found');
     }
 });
