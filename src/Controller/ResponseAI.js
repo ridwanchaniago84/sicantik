@@ -1,12 +1,14 @@
 const axios = require('axios');
+const authorization = process.env.Authorization;
 
 const ResponseAI = (parameter) => {
     axios({
         method: 'post',
-        url: 'https://tenshihinanai.000webhostapp.com/api/c3240bced4d9afdcdcb375fbdde8f3ad/tenshi',
+        url: 'https://tenshihinanai.000webhostapp.com/api/tenshi',
         headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': authorization
         },
         data: {
             message: parameter.content,
