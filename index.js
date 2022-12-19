@@ -1,26 +1,47 @@
-require('dotenv').config();
-const Discord = require('discord.js');
-const bot = new Discord.Client();
+import { config } from 'dotenv';
+import {
+    ActionRowBuilder,
+    Client,
+    GatewayIntentBits,
+    InteractionType,
+    ModalBuilder,
+    Routes,
+    TextInputBuilder,
+    TextInputStyle,
+} from 'discord.js';
+import { REST } from '@discordjs/rest';
+
+import downloadCommand from './src/Commands/Download.js';
+import download from './src/Controller/Download.js';
+
+config();
+
 const TOKEN = process.env.TOKEN;
-const route = require('./src/Route/Main.Route').route;
-const ResponseAI = require('./src/Controller/ResponseAI').ResponseAI;
+// import { route } from './src/Route/Main.Route';
+import ResponseAI from './src/Controller/ResponseAI.js';
 
-bot.login(TOKEN);
-const prefix = 'ア';
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+    ],
+});
 
-bot.on('ready', () => {
-    console.info(`Logged in as ${bot.user.tag}!`);
-    bot.user.setPresence({
-        status: 'online'
-    });
+const rest = new REST({ version: '10' }).setToken(TOKEN);
+client.on('ready', () => {
+    console.log(`${client.user.tag} has logged in!`)
 
-    bot.user.setActivity("Ojou", {
-        type: "STREAMING",
-        url: 'https://www.youtube.com/watch?v=QxD8bQrVLpk'
+    client.user.setActivity("٩(๑`^´๑)۶", {
+        type: 1,
+        url: 'https://www.youtube.com/watch?v=7Hq-8iRwyOE'
     });
 });
 
-bot.on('message', messages => {
+client.on('messageCreate', (messages) => {
+    if (messages.author.id == process.env.ClientId)
+        return;
+
     const AIName = [
         'tenshi', 'Tenshi'
     ];
@@ -30,7 +51,7 @@ bot.on('message', messages => {
 
     const splitTextVoice = messages.content.split(' ');
     let founded = false;
-    
+
     splitTextVoice.map((message) => {
         let callingAI = AIName.find(name =>
             name === message
@@ -46,40 +67,130 @@ bot.on('message', messages => {
             return;
         }
     });
+});
 
-    // Function Parameter
+client.on('interactionCreate', (interaction) => {
+    if (interaction.type === InteractionType.ModalSubmit) {
+        if (interaction.customId === 'downloadModal') {
+            const downloadFile = download(interaction.fields.getTextInputValue('magnet'));
 
-    if (!messages.content.startsWith(prefix)) return;
-
-    const args = messages.content.trim().split(/ +/g);
-    const cmd = args[0].slice(prefix.length).toLowerCase();
-
-    switch (cmd) {
-        case 'download':
-            if (args[1] && args[2]) {
-                route({
-                    command: cmd,
-                    message: messages,
-                    type: args[1],
-                    url: args[2]
-                });
-            }
-
-            break;
-        case 'list':
-            let folder = '';
-
-            if (args[1]) {
-                folder = messages.content.substr(messages.content.indexOf(" ") + 1);
-            }
-
-            route({
-                command: cmd,
-                message: messages,
-                folder: folder ? folder : ''
+            interaction.reply({
+                content: downloadFile,
             });
-            break;
-        default:
-            messages.channel.send('Command not found');
+        }
+
+        return;
+    }
+
+    if (interaction.commandName === 'download') {
+        const modal = new ModalBuilder()
+            .setTitle('Download Torrent')
+            .setCustomId('downloadModal')
+            .setComponents(
+                new ActionRowBuilder().setComponents(
+                    new TextInputBuilder()
+                        .setLabel('Magnet')
+                        .setCustomId('magnet')
+                        .setStyle(TextInputStyle.Paragraph)
+                )
+            );
+
+        interaction.showModal(modal);
     }
 });
+
+async function main() {
+    const commands = [
+        downloadCommand
+    ];
+    try {
+        console.log('Started refreshing application (/) commands.');
+        await rest.put(Routes.applicationGuildCommands(process.env.ClientId, process.env.GuildId), {
+            body: commands,
+        });
+        client.login(TOKEN);
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+main();
+
+// bot.login(TOKEN);
+// const prefix = 'ア';
+
+// bot.on('ready', () => {
+//     console.info(`Logged in as ${bot.user.tag}!`);
+//     bot.user.setPresence({
+//         status: 'online'
+//     });
+
+//     bot.user.setActivity("٩(๑`^´๑)۶", {
+//         type: "STREAMING",
+//         url: 'https://www.youtube.com/watch?v=7Hq-8iRwyOE'
+//     });
+// });
+
+// bot.on('message', messages => {
+//     const AIName = [
+//         'tenshi', 'Tenshi'
+//     ];
+
+//     if (AIName.includes(messages.content))
+//         return messages.channel.send('Apa?');
+
+//     const splitTextVoice = messages.content.split(' ');
+//     let founded = false;
+
+//     splitTextVoice.map((message) => {
+//         let callingAI = AIName.find(name =>
+//             name === message
+//         );
+
+//         if (callingAI && !founded) {
+//             founded = true;
+//             ResponseAI({
+//                 message: messages,
+//                 content: messages.content
+//             });
+
+//             return;
+//         }
+//     });
+
+//     // Function Parameter
+
+//     if (!messages.content.startsWith(prefix)) return;
+
+//     const args = messages.content.trim().split(/ +/g);
+//     const cmd = args[0].slice(prefix.length).toLowerCase();
+
+//     switch (cmd) {
+//         case 'download':
+//             if (args[1] && args[2]) {
+//                 route({
+//                     command: cmd,
+//                     message: messages,
+//                     type: args[1],
+//                     url: args[2]
+//                 });
+//             }
+
+//             break;
+//         case 'list':
+//             let folder = '';
+
+//             if (args[1]) {
+//                 folder = messages.content.substr(messages.content.indexOf(" ") + 1);
+//             }
+
+//             route({
+//                 command: cmd,
+//                 message: messages,
+//                 folder: folder ? folder : ''
+//             });
+//             break;
+//         default:
+//             messages.channel.send('Command not found');
+//     }
+// });

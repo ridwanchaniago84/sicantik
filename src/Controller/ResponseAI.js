@@ -1,10 +1,13 @@
-const axios = require('axios');
+import axios from 'axios';
+import { config } from 'dotenv';
+
+config();
 const authorization = process.env.Authorization;
 
 const ResponseAI = (parameter) => {
     axios({
         method: 'post',
-        url: 'https://tenshihinanai.000webhostapp.com/api/tenshi',
+        url: 'https://tenshinov2022.000webhostapp.com/api/tenshi',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -23,4 +26,5 @@ const ResponseAI = (parameter) => {
         });
 }
 
-exports.ResponseAI = ResponseAI;
+
+export default ResponseAI;

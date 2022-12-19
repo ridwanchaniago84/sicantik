@@ -1,23 +1,17 @@
-const axios = require('axios');
+import axios from 'axios';
 
-const download = (parameter) => {
-    switch (parameter.type) {
-        case '-t':
-            axios.post('https://ztorrentdowloader.herokuapp.com/add-magnet', {
-                magnet: parameter.url
-            })
-                .then(() => {
-                    parameter.message.channel.send('Check your file ini here: https://ztorrentdowloader.herokuapp.com/file');
-                })
-                .catch(() => {
-                    parameter.message.channel.send('Shippai');
-                });
+const download = (magnet) => {
+    // axios.post('https://ztorrentdowloader.herokuapp.com/add-magnet', {
+    //     magnet: magnet
+    // })
+    //     .then(() => {
+    //         return 'Check your file ini here: https://ztorrentdowloader.herokuapp.com/file';
+    //     })
+    //     .catch(() => {
+    //         return 'Shippai';
+    //     });
 
-            parameter.message.channel.send('Check your file ini here: https://ztorrentdowloader.herokuapp.com/file');
-            break;
-        default:
-            parameter.message.channel.send('Command not found');
-    }
+    return 'ehehe';
 }
 
-exports.download = download;
+export default download;
