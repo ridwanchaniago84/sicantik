@@ -78,7 +78,6 @@ client.on('interactionCreate', (interaction) => {
                 content: downloadFile,
             });
         }
-
         return;
     }
 
