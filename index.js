@@ -7,11 +7,13 @@ import {
     ModalBuilder,
     Routes,
     TextInputBuilder,
-    TextInputStyle,
+    TextInputStyle
 } from 'discord.js';
 import { REST } from '@discordjs/rest';
 
 import downloadCommand from './src/Commands/Download.js';
+import messageCommand from './src/Commands/Message.js';
+
 import download from './src/Controller/Download.js';
 
 config();
@@ -69,7 +71,7 @@ client.on('messageCreate', (messages) => {
     });
 });
 
-client.on('interactionCreate', (interaction) => {
+client.on('interactionCreate', async (interaction) => {
     if (interaction.type === InteractionType.ModalSubmit) {
         if (interaction.customId === 'downloadModal') {
             const downloadFile = download(interaction.fields.getTextInputValue('magnet'));
@@ -78,8 +80,11 @@ client.on('interactionCreate', (interaction) => {
                 content: downloadFile,
             });
         }
+
         return;
     }
+
+
 
     if (interaction.commandName === 'download') {
         const modal = new ModalBuilder()
@@ -96,11 +101,28 @@ client.on('interactionCreate', (interaction) => {
 
         interaction.showModal(modal);
     }
+
+    if (interaction.commandName === 'Get Message Attachment URL') {
+        try {
+            const msgContent = await interaction.channel.messages.fetch(interaction.targetId);
+
+            const msgCollection = [...msgContent.attachments][0];
+
+            interaction.reply({
+                content: msgCollection[1].attachment,
+            });
+        } catch (err) {
+            interaction.reply({
+                content: 'Pesan bukan lampiran!'
+            });
+        }
+    }
 });
 
 async function main() {
     const commands = [
-        downloadCommand
+        downloadCommand,
+        messageCommand
     ];
     try {
         console.log('Started refreshing application (/) commands.');
