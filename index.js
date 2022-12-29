@@ -16,6 +16,7 @@ import messageCommand from './src/Commands/Message.js';
 import generateImage from './src/Commands/GenerateImage.js';
 
 import download from './src/Controller/Download.js';
+import imageOpenAI from './src/Controller/Image.js';
 
 config();
 
@@ -86,9 +87,19 @@ client.on('interactionCreate', async (interaction) => {
     }
 
 
-    // if (interaction.commandName === 'generateimage') {
-    //     console.log(interaction.options.getString('promp'));
-    // }
+    if (interaction.commandName === 'generateimage') {
+        interaction.reply({
+            content: "Tunggu sebentar ya :)"
+        });
+
+        const response = await imageOpenAI(interaction.options.getString('promp'));
+
+        interaction.editReply({
+            content: response
+        });
+
+        return;
+    }
 
     if (interaction.commandName === 'download') {
         const modal = new ModalBuilder()
@@ -104,6 +115,7 @@ client.on('interactionCreate', async (interaction) => {
             );
 
         interaction.showModal(modal);
+        return
     }
 
     if (interaction.commandName === 'Get Message Attachment URL') {
@@ -120,6 +132,8 @@ client.on('interactionCreate', async (interaction) => {
                 content: 'Pesan bukan lampiran!'
             });
         }
+
+        return;
     }
 });
 
