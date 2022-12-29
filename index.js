@@ -13,6 +13,7 @@ import { REST } from '@discordjs/rest';
 
 import downloadCommand from './src/Commands/Download.js';
 import messageCommand from './src/Commands/Message.js';
+import generateImage from './src/Commands/GenerateImage.js';
 
 import download from './src/Controller/Download.js';
 
@@ -85,6 +86,9 @@ client.on('interactionCreate', async (interaction) => {
     }
 
 
+    // if (interaction.commandName === 'generateimage') {
+    //     console.log(interaction.options.getString('promp'));
+    // }
 
     if (interaction.commandName === 'download') {
         const modal = new ModalBuilder()
@@ -122,7 +126,8 @@ client.on('interactionCreate', async (interaction) => {
 async function main() {
     const commands = [
         downloadCommand,
-        messageCommand
+        messageCommand,
+        generateImage
     ];
     try {
         console.log('Started refreshing application (/) commands.');
