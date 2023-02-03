@@ -11,12 +11,14 @@ import {
 } from 'discord.js';
 import { REST } from '@discordjs/rest';
 
-import downloadCommand from './src/Commands/Download.js';
+// import downloadCommand from './src/Commands/Download.js';
+import changeTokenDiscordCommand from './src/Commands/Discord.js';
 import messageCommand from './src/Commands/Message.js';
 import generateImage from './src/Commands/GenerateImage.js';
 
 import download from './src/Controller/Download.js';
 import imageOpenAI from './src/Controller/Image.js';
+import { changeToken } from './src/Controller/Discord.js';
 
 config();
 
@@ -101,6 +103,20 @@ client.on('interactionCreate', async (interaction) => {
         return;
     }
 
+    if (interaction.commandName === 'changeTokenDiscord') {
+        interaction.reply({
+            content: "Tunggu sebentar ya :)"
+        });
+
+        const response = await changeToken(interaction.options.getString('token'));
+
+        interaction.editReply({
+            content: response
+        });
+
+        return;
+    }
+
     if (interaction.commandName === 'download') {
         const modal = new ModalBuilder()
             .setTitle('Download Torrent')
@@ -139,9 +155,10 @@ client.on('interactionCreate', async (interaction) => {
 
 async function main() {
     const commands = [
-        downloadCommand,
+        // downloadCommand,
         messageCommand,
-        generateImage
+        generateImage,
+        changeTokenDiscordCommand
     ];
     try {
         console.log('Started refreshing application (/) commands.');

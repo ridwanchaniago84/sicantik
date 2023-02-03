@@ -6,6 +6,7 @@ const generateImage = new SlashCommandBuilder()
     .addStringOption(option =>
         option.setName('promp')
             .setDescription('Promp Image')
+            .setRequired(true)
     );
 
 export default generateImage.toJSON();

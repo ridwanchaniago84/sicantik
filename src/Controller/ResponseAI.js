@@ -7,7 +7,7 @@ const authorization = process.env.Authorization;
 const ResponseAI = (parameter) => {
     axios({
         method: 'post',
-        url: 'https://tenshinov2022.000webhostapp.com/api/tenshi',
+        url: `${process.env.TenshiEndPoint}/api/tenshi`,
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -25,6 +25,5 @@ const ResponseAI = (parameter) => {
             console.error(err);
         });
 }
-
 
 export default ResponseAI;
