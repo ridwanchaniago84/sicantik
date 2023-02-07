@@ -11,6 +11,8 @@ import {
 } from 'discord.js';
 import { REST } from '@discordjs/rest';
 import cron from 'node-cron';
+import axios from 'axios';
+import fs from 'fs';
 
 // import downloadCommand from './src/Commands/Download.js';
 import changeTokenDiscordCommand from './src/Commands/Discord.js';
@@ -45,11 +47,34 @@ client.on('ready', () => {
     });
 });
 
+const getBackup = () => {
+    axios.get(`${process.env.TenshiEndPoint}/api/brain-backup`, {
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': process.env.Authorization
+        }
+    })
+        .then((response) => {
+            fs.writeFileSync('./backup.json', JSON.stringify(response.data));
+        }).then(() => {
+            client.channels.cache.get('1057969782181347408').send({
+                files: [
+                    './backup.json'
+                ]
+            });
+        }).catch((error) => {
+            console.log('Get backup error: ' + error);
+        });;
+}
+
 cron.schedule('0 1 * * *', async () => {
-    console.log('Start daily scratch.');
+    console.log('Start daily daily routine');
     const message = await getData();
 
     client.channels.cache.get('1057969782181347408').send(message);
+    axios.get(`${process.env.TenshiEndPoint}/send-notification`);
+    getBackup();
 });
 
 client.on('messageCreate', (messages) => {
