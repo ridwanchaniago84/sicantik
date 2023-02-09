@@ -73,7 +73,13 @@ cron.schedule('0 1 * * *', async () => {
     const message = await getData();
 
     client.channels.cache.get('1057969782181347408').send(message);
-    axios.get(`${process.env.TenshiEndPoint}/send-notification`);
+    axios.get(`${process.env.TenshiEndPoint}/api/send-notification`, {
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': process.env.Authorization
+        }
+    });
     getBackup();
 });
 
