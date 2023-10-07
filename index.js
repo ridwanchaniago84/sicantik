@@ -13,11 +13,13 @@ import { REST } from '@discordjs/rest';
 import cron from 'node-cron';
 import axios from 'axios';
 import fs from 'fs';
+import Tesseract from 'tesseract.js';
 
 // import downloadCommand from './src/Commands/Download.js';
 import changeTokenDiscordCommand from './src/Commands/Discord.js';
 import messageCommand from './src/Commands/Message.js';
 import generateImage from './src/Commands/GenerateImage.js';
+import convertImageCommand from './src/Commands/ImageToText.js';
 
 import download from './src/Controller/Download.js';
 import imageOpenAI from './src/Controller/Image.js';
@@ -172,6 +174,42 @@ client.on('interactionCreate', async (interaction) => {
         return
     }
 
+    if (interaction.commandName === 'Convert Image To Text') {
+        try {
+            await interaction.reply({
+                content: "Tunggu sebentar ya :)"
+            });
+
+            const msgContent = await interaction.channel.messages.fetch(interaction.targetId);
+            const msgCollection = [...msgContent.attachments][0];
+
+            if (msgCollection[1].height == null) {
+                interaction.editReply({
+                    content: 'File bukan gambar'
+                });
+
+                return;
+            }
+
+            await Tesseract.recognize(
+                msgCollection[1].attachment,
+                'eng',
+            ).then(({ data: { text } }) => {
+                interaction.editReply({
+                    content: "```" + text + "```"
+                });
+            }).catch(() => interaction.reply({
+                content: 'Terjadi kesalahan.'
+            }))
+        } catch (err) {
+            interaction.reply({
+                content: 'Pesan bukan lampiran!'
+            });
+        }
+
+        return;
+    }
+
     if (interaction.commandName === 'Get Message Attachment URL') {
         try {
             const msgContent = await interaction.channel.messages.fetch(interaction.targetId);
@@ -196,7 +234,8 @@ async function main() {
         // downloadCommand,
         messageCommand,
         generateImage,
-        changeTokenDiscordCommand
+        changeTokenDiscordCommand,
+        convertImageCommand
     ];
     try {
         console.log('Started refreshing application (/) commands.');

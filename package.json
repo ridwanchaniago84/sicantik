@@ -18,6 +18,7 @@
     "fs": "^0.0.1-security",
     "node-cron": "^3.0.2",
     "node-gyp": "^8.1.0",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "tesseract.js": "^5.0.2"
   }
 }
