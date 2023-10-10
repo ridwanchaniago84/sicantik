@@ -193,7 +193,7 @@ client.on('interactionCreate', async (interaction) => {
 
             await Tesseract.recognize(
                 msgCollection[1].attachment,
-                'eng',
+                'eng+ind',
             ).then(({ data: { text } }) => {
                 interaction.editReply({
                     content: "```" + text + "```"
